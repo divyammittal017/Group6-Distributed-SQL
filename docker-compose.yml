@@ -1,0 +1,72 @@
+services:
+  node1:
+    image: cockroachdb/cockroach:v26.4.0
+    hostname: node1
+    command:
+      - start
+      - --insecure
+      - --store=/cockroach/cockroach-data
+      - --listen-addr=0.0.0.0:26257
+      - --advertise-addr=node1:26257
+      - --http-addr=0.0.0.0:8080
+      - --join=node1:26257,node2:26257,node3:26257
+      - --cache=.25
+      - --max-sql-memory=.25
+    ports:
+      - "127.0.0.1:26257:26257"
+      - "127.0.0.1:8080:8080"
+    volumes:
+      - node1-data:/cockroach/cockroach-data
+    networks:
+      - crdb
+
+  node2:
+    image: cockroachdb/cockroach:v26.4.0
+    hostname: node2
+    command:
+      - start
+      - --insecure
+      - --store=/cockroach/cockroach-data
+      - --listen-addr=0.0.0.0:26257
+      - --advertise-addr=node2:26257
+      - --http-addr=0.0.0.0:8080
+      - --join=node1:26257,node2:26257,node3:26257
+      - --cache=.25
+      - --max-sql-memory=.25
+    ports:
+      - "127.0.0.1:26258:26257"
+      - "127.0.0.1:8081:8080"
+    volumes:
+      - node2-data:/cockroach/cockroach-data
+    networks:
+      - crdb
+
+  node3:
+    image: cockroachdb/cockroach:v26.4.0
+    hostname: node3
+    command:
+      - start
+      - --insecure
+      - --store=/cockroach/cockroach-data
+      - --listen-addr=0.0.0.0:26257
+      - --advertise-addr=node3:26257
+      - --http-addr=0.0.0.0:8080
+      - --join=node1:26257,node2:26257,node3:26257
+      - --cache=.25
+      - --max-sql-memory=.25
+    ports:
+      - "127.0.0.1:26259:26257"
+      - "127.0.0.1:8082:8080"
+    volumes:
+      - node3-data:/cockroach/cockroach-data
+    networks:
+      - crdb
+
+networks:
+  crdb:
+    driver: bridge
+
+volumes:
+  node1-data:
+  node2-data:
+  node3-data:
